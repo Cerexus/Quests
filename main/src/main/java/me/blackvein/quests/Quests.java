@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -96,6 +97,7 @@ import me.blackvein.quests.listeners.ItemListener;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
+import me.blackvein.quests.statistics.Metrics;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.storage.StorageFactory;
 import me.blackvein.quests.tasks.NpcEffectThread;
@@ -163,6 +165,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         conditionFactory = new ConditionFactory(this);
         depends = new Dependencies(this);
         trigger = new DenizenTrigger(this);
+        final Metrics metrics = new Metrics(this);
+        metrics.addCustomChart(new Metrics.SimplePie("language", new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return Lang.getISO();
+            }
+        }));
 
         // 2 - Load main config
         settings.init();
